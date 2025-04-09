@@ -15,15 +15,15 @@ router = APIRouter(prefix="/booking-slots", tags=["Booking Slots"])
 def create_slot(
     slot: BookingSlotCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    # current_user: User = Depends(get_current_user),
 ):
     court = db.query(Court).filter_by(id=slot.court_id).first()
     if not court:
         raise HTTPException(status_code=404, detail="Court not found")
 
     complex = db.query(SportsComplex).filter_by(id=court.complex_id).first()
-    if complex.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    # if complex.user_id != current_user.id:
+    #     raise HTTPException(status_code=403, detail="Not authorized")
 
     new_slot = BookingSlot(**slot.dict())
     db.add(new_slot)

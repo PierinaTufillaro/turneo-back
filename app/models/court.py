@@ -13,5 +13,5 @@ class Court(Base):
     complex_id = Column(Integer, ForeignKey("sports_complex.id"), nullable=False)
 
     complex = relationship("SportsComplex", back_populates="courts")
-    bookings = relationship("Booking", back_populates="court")
     availabilities = relationship("CourtAvailability", back_populates="court")
+    booking_slots = relationship("BookingSlot", back_populates="court", cascade="all, delete-orphan")
