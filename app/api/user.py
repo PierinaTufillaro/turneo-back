@@ -4,7 +4,6 @@ from app.schemas.user import UserCreate, UserResponse, UserUpdate
 from app.utils.hashing import Hash
 from app.oauth2 import get_current_user
 from app.models.user import User
-from app.crud import user as crud_user
 from app.db.session import get_db
 
 
@@ -12,11 +11,11 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/", response_model=list[UserResponse])
 def list_users(db: Session = Depends(get_db)):
-    return crud_user.get_users(db)
+    return db.query(User).limit(100).all()
 
 @router.post("/")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = crud_user.get_user_by_email(db, email=user.email)
+    db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_password = Hash.bcrypt(user.password)
